@@ -7,6 +7,8 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $email = trim($_POST['email'] ?? '');
     $password = $_POST['password'] ?? '';
     $confirmPassword = $_POST['confirmPassword'] ?? '';
+    $trangthai = 1;
+    $vaitro = 'user';
     
     $errors = [];
     
@@ -33,7 +35,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     
     // Kiểm tra email đã tồn tại chưa
     if (empty($errors)) {
-        $check_email = $conn->prepare("SELECT id FROM tbl_nguoidung WHERE tendangnhap = ?");
+        $check_email = $conn->prepare("SELECT manguoidung FROM tbl_nguoidung WHERE tendangnhap = ?");
         $check_email->bind_param("s", $email);
         $check_email->execute();
         $check_email->store_result();
@@ -53,11 +55,11 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         $pass = password_hash($password, PASSWORD_DEFAULT);
         
         // Sử dụng prepared statement để tránh SQL injection
-        $query = "INSERT INTO tbl_nguoidung (hotennguoidung, tendangnhap, matkhau) VALUES (?, ?, ?)";
+        $query = "INSERT INTO tbl_nguoidung (hotennguoidung, tendangnhap, matkhau, trangthai, vaitro) VALUES (?, ?, ?, ?, ?)";
         $stmt = $conn->prepare($query);
         
         if ($stmt) {
-            $stmt->bind_param("sss", $name, $email, $pass);
+            $stmt->bind_param("sssss", $name, $email, $pass, $trangthai, $vaitro);
             
             if ($stmt->execute()) {
                 echo "<script>
